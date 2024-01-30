@@ -1,0 +1,45 @@
+version: "3"
+services:
+  hub:
+    image: selenium/hub:4.15.0
+    # container_name: seleniumhubcontainer
+    chrome:
+    image: selenium/node-chrome:4.15.0
+    shm_size: '2g'
+    # container_name: chromenodecont
+    depends_on:
+    - hub
+    environment:
+    - SE_EVENT_BUS_HOST=hub
+    - SE_EVENT_BUS_PUBLISH_PORT=4442
+    - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+    - SE_NODE_MAX_SESSIONS=4
+    - SE_VNC_NO_PASSWORD=1
+  firefox:
+    image: selenium/node-firefox:4.15.0
+    shm_size: '2g'
+    # container_name: firefoxnodecont
+    depends_on:
+    - hub
+    environment:
+    - SE_EVENT_BUS_HOST=hub
+    - SE_EVENT_BUS_PUBLISH_PORT=4442
+    - SE_EVENT_BUS_SUBSCRIBE_PORT=4443 
+    - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+    - SE_NODE_MAX_SESSIONS=4
+    - SE_VNC_NO_PASSWORD=1   
+
+  vendor-portal_project:
+    image: shivamtest1997/selenium_docker_jenkins
+    depends_on:
+    - hub
+    - chrome
+    - firefox
+    environment:
+    - BROWSER=chrome
+    - HUBHOST=hub
+    - THREADCOUNT=3
+    volumes:
+    - ./output/vendorportal:/home/selenium-docker/test-output
+    
